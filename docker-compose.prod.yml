@@ -1,0 +1,79 @@
+# Docker Compose para producción de PriceSnap
+version: '3.8'
+
+services:
+  # API de PriceSnap
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pricesnap-api-prod
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: ${DATABASE_URL}
+      REDIS_URL: ${REDIS_URL}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASS: ${SMTP_PASS}
+    ports:
+      - "3000:3000"
+    networks:
+      - pricesnap-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Worker de scraping
+  scraping-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pricesnap-scraping-worker-prod
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: ${DATABASE_URL}
+      REDIS_URL: ${REDIS_URL}
+      JWT_SECRET: ${JWT_SECRET}
+      SCRAPING_USER_AGENT: ${SCRAPING_USER_AGENT}
+      PROXY_ROTATION_ENABLED: ${PROXY_ROTATION_ENABLED}
+    networks:
+      - pricesnap-network
+    restart: unless-stopped
+    command: yarn run start:worker
+    deploy:
+      replicas: 2
+
+  # Nginx como reverse proxy
+  nginx:
+    image: nginx:alpine
+    container_name: pricesnap-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - api
+    networks:
+      - pricesnap-network
+    restart: unless-stopped
+
+networks:
+  pricesnap-network:
+    driver: bridge
+
+
+
+
+
+

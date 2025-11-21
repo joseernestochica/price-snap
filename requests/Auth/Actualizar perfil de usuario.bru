@@ -1,0 +1,67 @@
+meta {
+  name: Actualizar perfil de usuario
+  type: http
+  seq: 7
+}
+
+patch {
+  url: {{base_url}}/auth/user
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{tokenAdmin}}
+}
+
+body:json {
+  {
+    "fullName": "Usuario Actualizado",
+    "phone": "+34 999 888 777",
+    "address": "Calle Nueva 456",
+    "postalCode": "28002",
+    "city": "Barcelona",
+    "province": "Barcelona",
+    "country": "ES",
+    "nif": "87654321A"
+  }
+}
+
+script:post-response {
+  test("Successful PATCH request", function () {
+    expect(res.getStatus()).to.be.oneOf([200, 201]);
+  });
+  
+  test("Response contains GetResponse structure", function () {
+    const body = res.getBody();
+    expect(body).to.have.property('data');
+    expect(body).to.have.property('message');
+    expect(body).to.have.property('statusCode');
+  });
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
+
+docs {
+  Actualiza el perfil del usuario autenticado.
+  
+  Requiere: Bearer token en el header Authorization
+  
+  Campos opcionales:
+  - fullName: Nombre completo
+  - phone: Teléfono
+  - address: Dirección
+  - postalCode: Código postal
+  - city: Ciudad
+  - province: Provincia
+  - country: País
+  - nif: NIF/DNI
+  - password: Nueva contraseña
+  - isTwoFactorEnabled: Habilitar/deshabilitar 2FA
+  - twoFactorSecret: Secreto para 2FA
+  
+  Respuesta exitosa: 200 con estructura GetResponse<User> que incluye data, message y statusCode
+}

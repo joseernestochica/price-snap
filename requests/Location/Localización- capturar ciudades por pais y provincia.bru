@@ -1,0 +1,20 @@
+meta {
+  name: Localización: capturar ciudades por pais y provincia
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{base_url}}/location/cities?country_iso=es&state_id=23
+  body: none
+  auth: inherit
+}
+
+params:query {
+  country_iso: es
+  state_id: 23
+}
+
+settings {
+  encodeUrl: true
+}

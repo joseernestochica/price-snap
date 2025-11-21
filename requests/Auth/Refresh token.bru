@@ -1,0 +1,55 @@
+meta {
+  name: Refresh token
+  type: http
+  seq: 11
+}
+
+post {
+  url: {{base_url}}/auth/refresh-token
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "refreshToken": "{{refreshToken}}",
+    "userId": "{{userId}}",
+    "ip": "127.0.0.1"
+  }
+}
+
+vars:pre-request {
+  refreshToken: 0d89b084-4fcd-4da4-a823-4a772811e62d
+  userId: f36ba17a-d383-4a78-a03d-df8ba47ffc9b
+}
+
+script:post-response {
+  test("Successful POST request", function () {
+    expect(res.getStatus()).to.be.oneOf([200, 201]);
+  });
+  
+  test("Response contains GetResponse structure", function () {
+    const body = res.getBody();
+    expect(body).to.have.property('data');
+    expect(body).to.have.property('token');
+    expect(body).to.have.property('refreshToken');
+    expect(body).to.have.property('message');
+    expect(body).to.have.property('statusCode');
+  });
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
+
+docs {
+  Renueva el access token usando el refresh token.
+  
+  Campos requeridos:
+  - refreshToken: Token de renovación válido
+  - userId: ID del usuario
+  - ip: Dirección IP del cliente
+  
+  Respuesta exitosa: 200 con estructura GetResponse<User> que incluye data, token, refreshToken, message y statusCode
+}

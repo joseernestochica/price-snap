@@ -1,0 +1,106 @@
+# Docker Compose para desarrollo de PriceSnap
+version: '3.8'
+
+services:
+  # Base de datos PostgreSQL
+  postgres:
+    image: postgres:15-alpine
+    container_name: pricesnap-postgres
+    environment:
+      POSTGRES_DB: pricesnap_db
+      POSTGRES_USER: pricesnap_user
+      POSTGRES_PASSWORD: pricesnap_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./sql/init:/docker-entrypoint-initdb.d
+    networks:
+      - pricesnap-network
+    restart: unless-stopped
+
+  # Redis para cache y colas
+  redis:
+    image: redis:7-alpine
+    container_name: pricesnap-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - pricesnap-network
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+
+  # API de PriceSnap
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pricesnap-api
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgresql://pricesnap_user:pricesnap_password@postgres:5432/pricesnap_db
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: development-jwt-secret
+      JWT_EXPIRES_IN: 7d
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - pricesnap-network
+    restart: unless-stopped
+    command: yarn run start:dev
+
+  # Worker de scraping
+  scraping-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pricesnap-scraping-worker
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgresql://pricesnap_user:pricesnap_password@postgres:5432/pricesnap_db
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: development-jwt-secret
+    volumes:
+      - .:/app
+      - /app/node_modules
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - pricesnap-network
+    restart: unless-stopped
+    command: yarn run start:worker
+
+  # Adminer para gestión de base de datos (opcional)
+  adminer:
+    image: adminer:4.8.1
+    container_name: pricesnap-adminer
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    networks:
+      - pricesnap-network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  pricesnap-network:
+    driver: bridge
+
+
+
+
+
+

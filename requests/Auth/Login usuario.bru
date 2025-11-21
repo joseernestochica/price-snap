@@ -1,0 +1,64 @@
+meta {
+  name: Login usuario
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{base_url}}/auth/login
+  body: formUrlEncoded
+  auth: inherit
+}
+
+body:json {
+  {
+    "email": "test@pricesnap.dev",
+    "password": "Test123!",
+    "token2fa": ""
+  }
+}
+
+body:form-urlencoded {
+  email: joseernestochica@gmail.com
+  password: joseernestochica@gmail.com!1
+  ~email: urbecomsl@gmail.com
+  ~password: urbecomsl@gmail.com!1
+}
+
+body:multipart-form {
+  email: joseernestochica@gmail.com
+  password: joseernestochica@gmail.com
+}
+
+script:post-response {
+  test("Successful POST request", function () {
+    expect(res.getStatus()).to.be.oneOf([200, 201]);
+  });
+  
+  test("Response contains GetResponse structure", function () {
+    const body = res.getBody();
+    expect(body).to.have.property('data');
+    expect(body).to.have.property('token');
+    expect(body).to.have.property('refreshToken');
+    expect(body).to.have.property('message');
+    expect(body).to.have.property('statusCode');
+  });
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
+
+docs {
+  Inicia sesión de un usuario existente en PriceSnap.
+  
+  Campos requeridos:
+  - email: Email del usuario
+  - password: Contraseña del usuario
+  
+  Campos opcionales:
+  - token2fa: Código de autenticación de dos factores (si está habilitado)
+  
+  Respuesta exitosa: 200 con estructura GetResponse<User> que incluye data, token, refreshToken, message y statusCode
+}

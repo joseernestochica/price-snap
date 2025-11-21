@@ -1,0 +1,31 @@
+meta {
+  name: Login con Google - Iniciar
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{base_url}}/auth/google?appRedirect={{appRedirect}}
+  body: none
+  auth: inherit
+}
+
+script:post-response {
+  test("Redirect to Google OAuth", function () {
+    expect(res.getStatus()).to.equal(302);
+  });
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
+
+docs {
+  Inicia el proceso de login con Google OAuth.
+  
+  Parámetros de consulta:
+  - appRedirect: URL donde redirigir después del login exitoso (opcional)
+  
+  Respuesta: 302 redirect a Google OAuth con cookies de estado
+}

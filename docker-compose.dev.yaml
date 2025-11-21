@@ -1,0 +1,48 @@
+services:
+  # Base de datos PostgreSQL para PriceSnap API - Desarrollo
+  db:
+    image: postgres:15-alpine
+    restart: always
+    ports:
+      - "5434:5432"  # Puerto 5434 para evitar conflictos con otras instancias
+    environment:
+      POSTGRES_USER: pricesnap_user
+      POSTGRES_PASSWORD: pricesnap_password
+      POSTGRES_DB: pricesnap_dev
+    container_name: pricesnap_dev_db
+    volumes:
+      - ./postgres:/var/lib/postgresql/data
+      # Scripts de inicialización
+      - ./sql/init:/docker-entrypoint-initdb.d:ro
+      - ./sql:/docker-entrypoint-initdb.d/sql:ro
+    networks:
+      - pricesnap-dev-network
+
+  # Redis para cache y colas - Desarrollo
+  redis:
+    image: redis:7-alpine
+    restart: always
+    ports:
+      - "6380:6379"  # Puerto 6380 para evitar conflictos
+    container_name: pricesnap_dev_redis
+    volumes:
+      - ./redis:/data
+    networks:
+      - pricesnap-dev-network
+    command: redis-server --appendonly yes
+
+  # Adminer para gestión de base de datos
+  adminer:
+    image: adminer:4.8.1
+    restart: always
+    ports:
+      - "8081:8080"  # Puerto 8081 para evitar conflictos
+    container_name: pricesnap_dev_adminer
+    depends_on:
+      - db
+    networks:
+      - pricesnap-dev-network
+
+networks:
+  pricesnap-dev-network:
+    driver: bridge

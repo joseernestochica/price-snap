@@ -1,0 +1,21 @@
+meta {
+  name: Localización: capturar provincia por código
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{base_url}}/location/state?country_iso=es&state_id=23
+  body: none
+  auth: inherit
+}
+
+params:query {
+  country_iso: es
+  state_id: 23
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -1,0 +1,66 @@
+meta {
+  name: Registrar usuario
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{base_url}}/auth/register
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "email": "test@pricesnap.dev",
+    "password": "Test123!",
+    "fullName": "Usuario Test",
+    "phone": "+34 666 777 888",
+    "address": "Calle Ejemplo 123",
+    "postalCode": "28001",
+    "city": "Madrid",
+    "province": "Madrid",
+    "country": "ES",
+    "nif": "12345678Z",
+    "roles": ["user"]
+  }
+}
+
+script:post-response {
+  test("Successful POST request", function () {
+    expect(res.getStatus()).to.be.oneOf([200, 201]);
+  });
+  
+  test("Response contains GetResponse structure", function () {
+    const body = res.getBody();
+    expect(body).to.have.property('data');
+    expect(body).to.have.property('token');
+    expect(body).to.have.property('message');
+    expect(body).to.have.property('statusCode');
+  });
+}
+
+settings {
+  encodeUrl: true
+}
+
+docs {
+  Registra un nuevo usuario en PriceSnap.
+  
+  Campos requeridos:
+  - email: Email único del usuario
+  - password: Contraseña (mínimo 6 caracteres)
+  - fullName: Nombre completo del usuario
+  
+  Campos opcionales:
+  - phone: Teléfono del usuario
+  - address: Dirección del usuario
+  - postalCode: Código postal
+  - city: Ciudad
+  - province: Provincia
+  - country: País
+  - nif: NIF/DNI del usuario
+  - roles: Array de roles (por defecto ["user"])
+  
+  Respuesta exitosa: 201 con estructura GetResponse<User> que incluye data, token, message y statusCode
+}

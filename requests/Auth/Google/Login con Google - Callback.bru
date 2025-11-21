@@ -1,0 +1,32 @@
+meta {
+  name: Login con Google - Callback
+  type: http
+  seq: 7
+}
+
+get {
+  url: {{base_url}}/auth/google/callback?code={{code}}&state={{state}}
+  body: none
+  auth: inherit
+}
+
+script:post-response {
+  test("Successful OAuth callback", function () {
+    expect(res.getStatus()).to.be.oneOf([200, 302]);
+  });
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
+
+docs {
+  Callback de Google OAuth (usado internamente por Google).
+  
+  Parámetros:
+  - code: Código de autorización de Google
+  - state: Estado de seguridad
+  
+  Respuesta: Redirect a la aplicación con cookies de autenticación
+}

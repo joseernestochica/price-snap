@@ -1,0 +1,49 @@
+meta {
+  name: Eliminar refresh token
+  type: http
+  seq: 12
+}
+
+delete {
+  url: {{base_url}}/auth/refresh-token/:userId/:refreshTokenId
+  body: none
+  auth: bearer
+}
+
+params:path {
+  userId: c285bcd2-fc67-45fb-a20c-a091b6d45c3e
+  refreshTokenId: 244c2342-dcd6-4f7c-850a-4cd63659ea8d
+}
+
+auth:bearer {
+  token: {{tokenAdmin}}
+}
+
+script:post-response {
+  test("Successful DELETE request", function () {
+    expect(res.getStatus()).to.be.oneOf([200, 204]);
+  });
+  
+  test("Response contains GetResponse structure", function () {
+    const body = res.getBody();
+    expect(body).to.have.property('message');
+    expect(body).to.have.property('statusCode');
+  });
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
+
+docs {
+  Elimina un refresh token específico de un usuario.
+  
+  Requiere: Bearer token válido
+  
+  Parámetros de ruta:
+  - id: UUID del usuario
+  - token: UUID del refresh token a eliminar
+  
+  Respuesta exitosa: 200 con estructura GetResponse que incluye message y statusCode
+}

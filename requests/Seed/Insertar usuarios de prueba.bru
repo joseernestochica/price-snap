@@ -1,0 +1,55 @@
+meta {
+  name: Insertar usuarios de prueba
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{base_url}}/seed/users
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{tokenAdmin}}
+}
+
+script:post-response {
+  test("Status code is 200", function () {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("Response contains inserted count", function () {
+    const body = res.getBody();
+    expect(body).to.have.property('inserted');
+    expect(typeof body.inserted).to.equal('number');
+  });
+  
+  test("Inserts at least 30 users", function () {
+    const body = res.getBody();
+    expect(body.inserted).to.be.at.least(1);
+  });
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
+
+docs {
+  Inserta 30 usuarios de prueba en la base de datos.
+  
+  Requiere: Bearer token válido con rol de ADMIN
+  
+  Los usuarios se crean con:
+  - Emails: user1@example.com hasta user30@example.com
+  - Password: Password1!
+  - Roles: ['user']
+  - Datos completos: nombres, teléfonos, direcciones, ciudades, provincias, códigos postales, etc.
+  
+  Respuesta exitosa: 200 con { inserted: número_de_usuarios_insertados }
+  
+  Nota: Si los usuarios ya existen, solo se insertarán los que no están duplicados.
+}
+
+

@@ -1,0 +1,78 @@
+meta {
+  name: Actualizar usuario por ID (Admin)
+  type: http
+  seq: 8
+}
+
+patch {
+  url: {{base_url}}/auth/user-admin/:userId
+  body: json
+  auth: bearer
+}
+
+params:path {
+  userId: b5a63ad0-80dd-4685-ad70-5d528bb70887
+}
+
+auth:bearer {
+  token: {{tokenAdmin}}
+}
+
+body:json {
+  {
+    "fullName": "Usuario Actualizado por Admin",
+    "phone": "+34 111 222 333",
+    "address": "Calle Admin 789",
+    "postalCode": "28003",
+    "city": "Valencia",
+    "province": "Valencia",
+    "country": "ES",
+    "nif": "11223344B",
+    "roles": ["user"],
+    "isActive": true
+  }
+}
+
+script:post-response {
+  test("Successful PATCH request", function () {
+    expect(res.getStatus()).to.be.oneOf([200, 201]);
+  });
+  
+  test("Response contains GetResponse structure", function () {
+    const body = res.getBody();
+    expect(body).to.have.property('data');
+    expect(body).to.have.property('message');
+    expect(body).to.have.property('statusCode');
+  });
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
+
+docs {
+  Actualiza un usuario específico por ID (solo para administradores y expertos).
+  
+  Requiere: Bearer token con rol admin o expert
+  
+  Parámetros de ruta:
+  - id: UUID del usuario a actualizar
+  
+  Campos opcionales:
+  - fullName: Nombre completo
+  - phone: Teléfono
+  - address: Dirección
+  - postalCode: Código postal
+  - city: Ciudad
+  - province: Provincia
+  - country: País
+  - nif: NIF/DNI
+  - password: Nueva contraseña
+  - roles: Array de roles
+  - isActive: Estado activo
+  - isTwoFactorEnabled: Habilitar/deshabilitar 2FA
+  - twoFactorSecret: Secreto para 2FA
+  
+  Respuesta exitosa: 200 con estructura GetResponse<User> que incluye data, message y statusCode
+}

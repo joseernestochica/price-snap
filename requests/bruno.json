@@ -1,0 +1,9 @@
+{
+	"version": "1",
+	"name": "PriceSnap API",
+	"type": "collection",
+	"ignore": [
+		"node_modules",
+		".git"
+	]
+}

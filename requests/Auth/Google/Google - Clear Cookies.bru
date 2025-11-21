@@ -1,0 +1,28 @@
+meta {
+  name: Google - Clear Cookies
+  type: http
+  seq: 11
+}
+
+post {
+  url: {{base_url}}/auth/google/clear-cookies
+  body: none
+  auth: inherit
+}
+
+script:post-response {
+  test("Successful cookie clearing", function () {
+    expect(res.getStatus()).to.equal(200);
+  });
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
+
+docs {
+  Limpia todas las cookies de autenticación de Google OAuth.
+  
+  Respuesta exitosa: 200 con mensaje de confirmación
+}

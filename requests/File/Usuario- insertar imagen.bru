@@ -1,0 +1,40 @@
+meta {
+  name: Usuario: insertar imagen
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{base_url}}/file/user/:userId
+  body: multipartForm
+  auth: bearer
+}
+
+params:path {
+  userId: 887f7f68-2ab0-42d1-a14c-1558113699ef
+}
+
+auth:bearer {
+  token: {{tokenAdmin}}
+}
+
+body:multipart-form {
+  files: @file(/Users/ernestochicadelatorre/Desktop/Fotos/logos-and-brands/034-opera.png|/Users/ernestochicadelatorre/Desktop/Fotos/logos-and-brands/041-safari.png)
+}
+
+script:post-response {
+  test("Successful POST request", function () {
+      expect(res.getStatus()).to.be.oneOf([200, 201]);
+  });
+  
+}
+
+settings {
+  encodeUrl: true
+}
+
+docs {
+  This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.
+  
+  A successful POST request typically returns a `200 OK` or `201 Created` response code.
+}

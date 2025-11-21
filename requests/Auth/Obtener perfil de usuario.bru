@@ -1,0 +1,41 @@
+meta {
+  name: Obtener perfil de usuario
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{base_url}}/auth/user
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{tokenAdmin}}
+}
+
+script:post-response {
+  test("Status code is 200", function () {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("Response contains GetResponse structure", function () {
+    const body = res.getBody();
+    expect(body).to.have.property('data');
+    expect(body).to.have.property('message');
+    expect(body).to.have.property('statusCode');
+  });
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
+
+docs {
+  Obtiene el perfil completo del usuario autenticado.
+  
+  Requiere: Bearer token en el header Authorization
+  
+  Respuesta exitosa: 200 con estructura GetResponse<User> que incluye data, message y statusCode
+}

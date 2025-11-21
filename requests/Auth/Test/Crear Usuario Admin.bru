@@ -1,0 +1,58 @@
+meta {
+  name: Crear Usuario Admin
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{base_url}}/auth/register
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "email": "joseernestochica@gmail.com",
+    "password": "joseernestochica@gmail.com!1",
+    "fullName": "Jose Ernesto Chica de la Torre",
+    "phone": "662521428",
+    "address": "C/ Democracia, 3",
+    "postalCode": "23005",
+    "city": "jaen",
+    "province": "23",
+    "country": "ES",
+    "nif": "26027481Z"
+  }
+}
+
+script:post-response {
+  test("Successful POST request", function () {
+    expect(res.getStatus()).to.be.oneOf([200, 201]);
+  });
+  
+  test("Response contains user and tokens", function () {
+    const body = res.getBody();
+    expect(body).to.have.property('user');
+    expect(body).to.have.property('accessToken');
+    expect(body).to.have.property('refreshToken');
+  });
+  
+  test("Set tokenAdmin variable", function () {
+    const body = res.getBody();
+    if (body.accessToken) {
+      bru.setVar("tokenAdmin", body.accessToken);
+    }
+  });
+}
+
+settings {
+  encodeUrl: true
+}
+
+docs {
+  Crea un usuario administrador con los datos específicos proporcionados.
+  
+  Este usuario tendrá rol de administrador y se almacenará el token en la variable tokenAdmin.
+  
+  Respuesta exitosa: 200/201 con user, accessToken y refreshToken
+}

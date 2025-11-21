@@ -1,0 +1,21 @@
+meta {
+  name: Localización: capturar pais por código
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{base_url}}/location/country?lang=es&country_iso=es
+  body: none
+  auth: inherit
+}
+
+params:query {
+  lang: es
+  country_iso: es
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

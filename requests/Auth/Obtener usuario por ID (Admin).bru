@@ -1,0 +1,49 @@
+meta {
+  name: Obtener usuario por ID (Admin)
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{base_url}}/auth/user-admin/:userId
+  body: none
+  auth: bearer
+}
+
+params:path {
+  userId: b5a63ad0-80dd-4685-ad70-5d528bb70887
+}
+
+auth:bearer {
+  token: {{tokenAdmin}}
+}
+
+script:post-response {
+  test("Status code is 200", function () {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("Response contains GetResponse structure", function () {
+    const body = res.getBody();
+    expect(body).to.have.property('data');
+    expect(body).to.have.property('message');
+    expect(body).to.have.property('statusCode');
+  });
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
+
+docs {
+  Obtiene un usuario específico por ID (solo para administradores y expertos).
+  
+  Requiere: Bearer token con rol admin o expert
+  
+  Parámetros de ruta:
+  - id: UUID del usuario a obtener
+  
+  Respuesta exitosa: 200 con estructura GetResponse<User> que incluye data, message y statusCode
+  Nota: La contraseña y el secreto 2FA se eliminan de la respuesta por seguridad
+}

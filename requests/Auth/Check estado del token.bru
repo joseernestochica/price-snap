@@ -1,0 +1,42 @@
+meta {
+  name: Check estado del token
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{base_url}}/auth/check-status
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{tokenAdmin}}
+}
+
+script:post-response {
+  test("Status code is 200", function () {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("Response contains GetResponse structure", function () {
+    const body = res.getBody();
+    expect(body).to.have.property('data');
+    expect(body).to.have.property('token');
+    expect(body).to.have.property('message');
+    expect(body).to.have.property('statusCode');
+  });
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
+
+docs {
+  Verifica el estado de autenticación del usuario actual.
+  
+  Requiere: Bearer token en el header Authorization
+  
+  Respuesta exitosa: 200 con estructura GetResponse<User> que incluye data, token, message y statusCode
+}

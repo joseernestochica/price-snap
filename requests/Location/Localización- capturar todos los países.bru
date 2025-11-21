@@ -1,0 +1,19 @@
+meta {
+  name: Localización: capturar todos los países
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{base_url}}/location/countries?lang=es
+  body: none
+  auth: inherit
+}
+
+params:query {
+  lang: es
+}
+
+settings {
+  encodeUrl: true
+}

@@ -1,0 +1,33 @@
+meta {
+  name: Usuario: eliminar todas las imágenes de un usuario por ID
+  type: http
+  seq: 7
+}
+
+delete {
+  url: {{base_url}}/file/user/:userId
+  body: multipartForm
+  auth: inherit
+}
+
+params:path {
+  userId: c285bcd2-fc67-45fb-a20c-a091b6d45c3e
+}
+
+script:post-response {
+  test("Successful POST request", function () {
+      expect(res.getStatus()).to.be.oneOf([200, 201]);
+  });
+  
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
+
+docs {
+  This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.
+  
+  A successful POST request typically returns a `200 OK` or `201 Created` response code.
+}

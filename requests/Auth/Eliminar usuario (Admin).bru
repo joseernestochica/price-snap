@@ -1,0 +1,51 @@
+meta {
+  name: Eliminar usuario (Admin)
+  type: http
+  seq: 10
+}
+
+delete {
+  url: {{base_url}}/auth/user/:userId
+  body: none
+  auth: bearer
+}
+
+params:path {
+  userId: f36ba17a-d383-4a78-a03d-df8ba47ffc9b
+}
+
+auth:bearer {
+  token: {{tokenAdmin}}
+}
+
+script:post-response {
+  test("Successful DELETE request", function () {
+    expect(res.getStatus()).to.be.oneOf([200, 204]);
+  });
+  
+  test("Response contains GetResponse structure", function () {
+    const body = res.getBody();
+    expect(body).to.have.property('data');
+    expect(body).to.have.property('message');
+    expect(body).to.have.property('statusCode');
+  });
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
+
+docs {
+  Elimina un usuario específico (soft delete) - solo para administradores.
+  
+  Requiere: Bearer token con rol admin
+  
+  Parámetros de ruta:
+  - id: UUID del usuario a eliminar
+  
+  Nota: Este es un soft delete - el usuario se marca como eliminado pero no se borra físicamente de la base de datos.
+  El email se modifica para evitar conflictos en futuros registros.
+  
+  Respuesta exitosa: 200 con estructura GetResponse<User> que incluye data, message y statusCode
+}

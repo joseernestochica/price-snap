@@ -1,0 +1,36 @@
+meta {
+  name: Google - Exchange Cookie
+  type: http
+  seq: 10
+}
+
+post {
+  url: {{base_url}}/auth/google/exchange-cookie
+  body: none
+  auth: inherit
+}
+
+script:post-response {
+  test("Successful cookie exchange", function () {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("Response contains tokens", function () {
+    const body = res.getBody();
+    expect(body).to.have.property('token');
+    expect(body).to.have.property('refreshToken');
+  });
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
+
+docs {
+  Intercambia las cookies de autenticación por tokens JSON.
+  
+  Requiere: Cookies de acceso establecidas por el callback de Google
+  
+  Respuesta exitosa: 200 con accessToken y refreshToken en formato JSON
+}

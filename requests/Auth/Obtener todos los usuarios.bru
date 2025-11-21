@@ -1,0 +1,46 @@
+meta {
+  name: Obtener todos los usuarios
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{base_url}}/auth/users
+  body: none
+  auth: bearer
+}
+
+params:query {
+  ~select: fullName
+}
+
+auth:bearer {
+  token: {{tokenAdmin}}
+}
+
+script:post-response {
+  test("Status code is 200", function () {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("Response contains GetResponse structure", function () {
+    const body = res.getBody();
+    expect(body).to.have.property('data');
+    expect(body).to.have.property('total');
+    expect(body).to.have.property('message');
+    expect(body).to.have.property('statusCode');
+  });
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
+
+docs {
+  Prueba el endpoint de lista de usuarios (solo para administradores y expertos).
+  
+  Requiere: Bearer token válido con rol de ADMIN o EXPERT
+  
+  Respuesta exitosa: 200 con estructura GetResponse<User[]> que incluye data, total, message y statusCode
+}

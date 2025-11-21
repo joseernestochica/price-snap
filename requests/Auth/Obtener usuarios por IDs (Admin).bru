@@ -1,0 +1,55 @@
+meta {
+  name: Obtener usuarios por IDs (Admin)
+  type: http
+  seq: 9
+}
+
+post {
+  url: {{base_url}}/auth/users/by-ids
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{tokenAdmin}}
+}
+
+body:json {
+  {
+    "ids": ["c285bcd2-fc67-45fb-a20c-a091b6d45c3e", "b5a63ad0-80dd-4685-ad70-5d528bb70887"],
+    "select": "id|email|fullName|roles|isActive"
+  }
+}
+
+script:post-response {
+  test("Successful POST request", function () {
+    expect(res.getStatus()).to.be.oneOf([200, 201]);
+  });
+  
+  test("Response contains GetResponse structure", function () {
+    const body = res.getBody();
+    expect(body).to.have.property('data');
+    expect(body).to.have.property('message');
+    expect(body).to.have.property('statusCode');
+  });
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
+
+docs {
+  Obtiene múltiples usuarios por sus IDs (solo para administradores).
+  
+  Requiere: Bearer token con rol admin
+  
+  Campos requeridos:
+  - ids: Array de UUIDs de usuarios a obtener
+  
+  Campos opcionales:
+  - select: Campos a seleccionar separados por '|' (por defecto todos)
+  
+  Respuesta exitosa: 200 con estructura GetResponse<User[]> que incluye data, message y statusCode
+  Nota: Las contraseñas se eliminan automáticamente de la respuesta por seguridad
+}
