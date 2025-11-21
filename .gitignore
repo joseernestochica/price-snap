@@ -10,6 +10,7 @@
 !static/blank.png
 /files_demo
 /postman/*
+/context/*
 
 # Logs
 logs
