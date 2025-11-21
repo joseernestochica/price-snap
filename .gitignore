@@ -6,6 +6,7 @@
 
 # Data
 /postgres
+/redis
 /static/*
 !static/blank.png
 /files_demo
