@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { SeedModule } from './seed/seed.module';
 import { FileModule } from './file/file.module';
 import { LocationModule } from './location/location.module';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { LocationModule } from './location/location.module';
     SeedModule,
     FileModule,
     LocationModule,
+    MailModule,
   ],
   controllers: [AppController],
   providers: [AppService],
