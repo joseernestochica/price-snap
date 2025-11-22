@@ -1,0 +1,60 @@
+{
+	"typescript.preferences.includePackageJsonAutoImports": "on",
+	"typescript.autoImportSuggestions.enabled": true,
+	"typescript.suggest.autoImports": true,
+	"chat.editor.fontSize": 14,
+	"workbench.colorCustomizations": {
+		"activityBar.activeBackground": "#ff3333",
+		"activityBar.background": "#ff3333",
+		"activityBar.foreground": "#e7e7e7",
+		"activityBar.inactiveForeground": "#e7e7e799",
+		"activityBarBadge.background": "#00df00",
+		"activityBarBadge.foreground": "#15202b",
+		"commandCenter.border": "#e7e7e799",
+		"sash.hoverBorder": "#ff3333",
+		"statusBar.background": "#ff0000",
+		"statusBar.foreground": "#e7e7e7",
+		"statusBarItem.hoverBackground": "#ff3333",
+		"statusBarItem.remoteBackground": "#ff0000",
+		"statusBarItem.remoteForeground": "#e7e7e7",
+		"titleBar.activeBackground": "#ff0000",
+		"titleBar.activeForeground": "#e7e7e7",
+		"titleBar.inactiveBackground": "#ff000099",
+		"titleBar.inactiveForeground": "#e7e7e799"
+	},
+	"peacock.color": "#FF0000"
+,
+	"workbench.iconTheme": "material-icon-theme",
+	"material-icon-theme.activeIconPack": "nest",
+	"window.title": "${dirty}${activeEditorShort}${separator}API PRICESNAP",
+	"window.titleSeparator": " - ",
+	"gitlens.currentLine.enabled": true,
+  "gitlens.currentLine.format": " ${author}, ${dateAgo} • ${message|40}",
+  "gitlens.codeLens.enabled": true,
+  "gitlens.codeLens.authors.enabled": true,
+  "gitlens.codeLens.recentChange.enabled": true,
+  "gitlens.statusBar.enabled": true,
+  "gitlens.blame.annotations.enabled": false,
+  "gitlens.hovers.enabled": true,
+  "gitlens.views.repositories.files.layout": "tree",
+  "gitlens.views.repositories.autoRefresh": true,
+  "gitlens.views.commitDetails.location": "scm",
+  "gitlens.advanced.telemetry.enabled": false,
+
+  "git.enableSmartCommit": true,
+	"git.confirmSync": false,
+  "workbench.statusBar.visible": true,
+
+  "git.path": "/opt/homebrew/bin/git",
+	
+	// Configuración para generación automática de mensajes de commit con IA
+	"git.inputValidation": true,
+	"git.inputValidationLength": 72,
+	"git.inputValidationSubjectLength": 50,
+	
+	// Habilitar sugerencias de commit inteligentes (Cursor AI)
+	"sourceControl.commitInputScm": true,
+	
+	// Priorizar generación de mensajes con Cursor AI sobre GitLens
+	"gitlens.ai.generateCommitMessage.enabled": false
+}
