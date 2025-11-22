@@ -1,6 +1,6 @@
 import { Controller, Post, UploadedFiles, Param, Get, Res, Delete } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import type { Response, Express } from 'express';
+import type { Response } from 'express';
 
 import { FileService } from './file.service';
 import { Auth } from 'src/auth/decorators';
@@ -22,15 +22,30 @@ export class FileController {
 		@Param( 'imageName' ) imageName: string,
 		@Param( 'id' ) id: string,
 	) {
-		const path = this.fileService.getStaticImage( imageName, 'users', id );
-		res.sendFile( path );
+		try {
+			const path = this.fileService.getStaticImage( imageName, 'users', id );
+			if ( !path ) {
+				return res.status( 400 ).json( {
+					message: 'Image not found',
+					statusCode: 400,
+				} );
+			}
+			res.sendFile( path );
+		} catch ( error ) {
+			res.status( 400 ).json( {
+				message: error instanceof Error ? error.message : 'Error al obtener la imagen',
+				statusCode: 400,
+			} );
+		}
 	}
 
 	@Post( 'user/:id' )
 	@Auth( ValidRoles.user, ValidRoles.expert, ValidRoles.admin )
 	@UploadDirFiles( 'users' )
-	uploadUserFile ( @UploadedFiles() files: Array<Express.Multer.File>, @Param( 'id' ) id: string ) {
-		return this.fileService.insertUserImages( id, files );
+	uploadUserFile ( @UploadedFiles() files: Array<Express.Multer.File> | Express.Multer.File, @Param( 'id' ) id: string ) {
+		// Asegurar que files sea un array
+		const filesArray = Array.isArray( files ) ? files : files ? [ files ] : [];
+		return this.fileService.insertUserImages( id, filesArray );
 	}
 
 	@Delete( 'user/:id' )
