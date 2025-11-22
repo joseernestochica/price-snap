@@ -1,0 +1,113 @@
+meta {
+  name: Crear configuracion
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{base_url}}/config-admin
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{tokenAdmin}}
+}
+
+body:json {
+  {
+    "companyName": "PriceSnap S.L.",
+    "cifNif": "B12345678",
+    "phone": "+34612345678",
+    "address": "Calle Ejemplo, 123",
+    "postalCode": "28001",
+    "country": "España",
+    "province": "Madrid",
+    "city": "Madrid",
+    "email": "contacto@pricesnap.dev",
+    "currencyIso": "EUR",
+    "googleId": null
+  }
+}
+
+script:post-response {
+  test("Status code is 201", function () {
+    expect(res.getStatus()).to.equal(201);
+  });
+  
+  test("Response contains GetResponse structure", function () {
+    const body = res.getBody();
+    expect(body).to.have.property('data');
+    expect(body).to.have.property('message');
+    expect(body).to.have.property('statusCode');
+  });
+  
+  test("Response indicates success", function () {
+    const body = res.getBody();
+    expect(body.statusCode).to.equal(201);
+    expect(body.message).to.include('creada');
+  });
+  
+  test("Response contains configuration data", function () {
+    const body = res.getBody();
+    expect(body.data).to.have.property('id');
+    expect(body.data).to.have.property('companyName');
+    expect(body.data).to.have.property('email');
+    expect(body.data).to.have.property('currencyIso');
+  });
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
+
+docs {
+  Crea una nueva configuración del administrador.
+  
+  Requiere: Bearer token válido con rol de ADMIN
+  
+  Campos requeridos:
+  - companyName: Nombre de la empresa (máx. 255 caracteres)
+  - cifNif: CIF/NIF de la empresa (máx. 64 caracteres)
+  - phone: Teléfono de contacto (máx. 32 caracteres)
+  - address: Dirección completa (máx. 255 caracteres)
+  - postalCode: Código postal (máx. 16 caracteres)
+  - country: País (máx. 128 caracteres)
+  - province: Provincia (máx. 128 caracteres)
+  - city: Ciudad (máx. 128 caracteres)
+  - email: Email de contacto (debe ser válido, máx. 255 caracteres)
+  
+  Campos opcionales:
+  - currencyIso: Código ISO de moneda (3 caracteres, por defecto: EUR)
+  - googleId: ID de Google (máx. 255 caracteres, puede ser null)
+  
+  Nota: Solo puede existir una configuración. Si ya existe una, se debe usar el endpoint de actualización.
+  
+  Respuesta exitosa: 201 con estructura GetResponse<ConfigAdmin>:
+  {
+    "data": {
+      "id": "uuid",
+      "companyName": "PriceSnap S.L.",
+      "cifNif": "B12345678",
+      "phone": "+34612345678",
+      "address": "Calle Ejemplo, 123",
+      "postalCode": "28001",
+      "country": "España",
+      "province": "Madrid",
+      "city": "Madrid",
+      "email": "contacto@pricesnap.dev",
+      "currencyIso": "EUR",
+      "googleId": null
+    },
+    "message": "Configuración creada",
+    "statusCode": 201
+  }
+  
+  Errores comunes:
+  - 401: No autenticado o token inválido
+  - 403: Usuario no tiene rol de admin
+  - 400: Ya existe una configuración o validación fallida
+  - 500: Error de base de datos
+}
+

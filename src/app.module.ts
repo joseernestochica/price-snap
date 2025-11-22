@@ -9,6 +9,7 @@ import { SeedModule } from './seed/seed.module';
 import { FileModule } from './file/file.module';
 import { LocationModule } from './location/location.module';
 import { MailModule } from './mail/mail.module';
+import { ConfigAdminModule } from './config-admin/config-admin.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { MailModule } from './mail/mail.module';
     FileModule,
     LocationModule,
     MailModule,
+    ConfigAdminModule,
   ],
   controllers: [AppController],
   providers: [AppService],

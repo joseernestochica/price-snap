@@ -1,0 +1,74 @@
+meta {
+  name: Actualizar configuracion
+  type: http
+}
+
+patch {
+  url: {{base_url}}/config-admin
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{tokenAdmin}}
+}
+
+body:json {
+  {
+    "companyName": "PriceSnap S.L. Actualizada",
+    "phone": "+34698765432"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
+
+docs {
+  Actualiza la configuración del administrador existente.
+  
+  Requiere: Bearer token válido con rol de ADMIN
+  
+  Campos opcionales (todos los campos del CreateConfigAdminDto):
+  - companyName: Nombre de la empresa (máx. 255 caracteres)
+  - cifNif: CIF/NIF de la empresa (máx. 64 caracteres)
+  - phone: Teléfono de contacto (máx. 32 caracteres)
+  - address: Dirección completa (máx. 255 caracteres)
+  - postalCode: Código postal (máx. 16 caracteres)
+  - country: País (máx. 128 caracteres)
+  - province: Provincia (máx. 128 caracteres)
+  - city: Ciudad (máx. 128 caracteres)
+  - email: Email de contacto (debe ser válido, máx. 255 caracteres)
+  - currencyIso: Código ISO de moneda (3 caracteres)
+  - googleId: ID de Google (máx. 255 caracteres, puede ser null)
+  
+  Nota: Si no existe configuración, se crea una nueva con los datos proporcionados.
+  
+  Respuesta exitosa: 200 (actualización) o 201 (creación) con estructura GetResponse<ConfigAdmin>:
+  {
+    "data": {
+      "id": "uuid",
+      "companyName": "PriceSnap S.L. Actualizada",
+      "cifNif": "B12345678",
+      "phone": "+34698765432",
+      "address": "Calle Ejemplo, 123",
+      "postalCode": "28001",
+      "country": "España",
+      "province": "Madrid",
+      "city": "Madrid",
+      "email": "contacto@pricesnap.dev",
+      "currencyIso": "EUR",
+      "googleId": null
+    },
+    "message": "Configuración actualizada",
+    "statusCode": 200
+  }
+  
+  Errores comunes:
+  - 401: No autenticado o token inválido
+  - 403: Usuario no tiene rol de admin
+  - 400: Validación fallida
+  - 500: Error de base de datos
+}
+

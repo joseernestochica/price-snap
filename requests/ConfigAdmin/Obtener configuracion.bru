@@ -1,0 +1,58 @@
+meta {
+  name: Obtener configuracion
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{base_url}}/config-admin
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{tokenAdmin}}
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
+
+docs {
+  Obtiene la configuración del administrador.
+  
+  Requiere: Bearer token válido con rol de ADMIN o USER
+  
+  Respuesta exitosa: 200 con estructura GetResponse<ConfigAdmin | null>:
+  {
+    "data": {
+      "id": "uuid",
+      "companyName": "PriceSnap S.L.",
+      "cifNif": "B12345678",
+      "phone": "+34612345678",
+      "address": "Calle Ejemplo, 123",
+      "postalCode": "28001",
+      "country": "España",
+      "province": "Madrid",
+      "city": "Madrid",
+      "email": "contacto@pricesnap.dev",
+      "currencyIso": "EUR",
+      "googleId": null
+    },
+    "message": "Configuración encontrada",
+    "statusCode": 200
+  }
+  
+  Si no existe configuración:
+  {
+    "data": null,
+    "message": "No hay configuración",
+    "statusCode": 200
+  }
+  
+  Errores comunes:
+  - 401: No autenticado o token inválido
+  - 403: Usuario no tiene rol de admin o user
+  - 500: Error de base de datos
+}
